@@ -1,6 +1,7 @@
 "use server";
 
 import client from "@/libs/prismadb";
+import bcrypt from "bcrypt";
 
 export const signUp = async (prevState: any, data: FormData) => {
   const email = data.get("email") as string;
@@ -16,10 +17,12 @@ export const signUp = async (prevState: any, data: FormData) => {
     return { message: "비밀번호를 같게 입력해주세요", type: "error" };
   }
 
+  const hashPassword = bcrypt.hashSync(password, 10);
+
   await client.user.create({
     data: {
       email,
-      password,
+      password: hashPassword,
       name,
     },
   });
